@@ -6,6 +6,19 @@ from sklearn.model_selection import GridSearchCV, train_test_split
 from sklearn.metrics import accuracy_score
 
 def encode_categorical_columns(Pet_data):
+    '''
+    Adjusts the data so we can train our model on it. It takes the catogorical columns and splits
+    it up in multiple columns that are True or False.
+    
+    Parameters
+    ----------
+    Pet_data : Unencoded data.
+
+    Returns
+    -------
+    Pet_data : Encoded data.
+
+    '''
     categorical_cols = ['PetType', 'Breed', 'Color', 'Size']
     encoder = OneHotEncoder(sparse=False, drop='first')
     encoded_cols = pd.DataFrame(encoder.fit_transform(Pet_data[categorical_cols]))
@@ -16,6 +29,16 @@ def encode_categorical_columns(Pet_data):
     return Pet_data
 
 def find_best_params():
+    '''
+    Searches the best params for the model.
+    
+    Returns
+    -------
+    grid_search.best_params_: The best params for the model.
+    grid_search.best_score_: The best score the model achieved.
+
+    '''
+    
     model = DecisionTreeClassifier(random_state=42)
     
     param_grid = {
@@ -34,6 +57,15 @@ def find_best_params():
     
     
 def test_accuracy():
+    '''
+    Tests the accuracy score of the model.
+    
+    Returns
+    -------
+    score: The accuracy score of the model.
+
+    '''
+    
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
 
     model = DecisionTreeClassifier(max_depth=5, min_samples_split=5, min_samples_leaf=2)
@@ -47,21 +79,26 @@ def test_accuracy():
     return score
 
 def save_model():
+    '''
+    Saves the model in a file for later use.
+
+    '''
+    
     model = DecisionTreeClassifier(max_depth=5, min_samples_split=5, min_samples_leaf=2)
     model.fit(X, y)
     
     joblib.dump(model, 'decision_tree_model.pkl')
 
-Pet_data = pd.read_csv('pet_adoption_data.csv')
 
-Pet_data = encode_categorical_columns(Pet_data)
+Pet_data = pd.read_csv('pet_adoption_data.csv')  # Import the pet data.
 
-X = Pet_data.drop(columns=['AdoptionLikelihood', 'PetID'])
-y = Pet_data['AdoptionLikelihood']
+Pet_data = encode_categorical_columns(Pet_data)  # Encode the categorical columns
 
-save_model()
+X = Pet_data.drop(columns=['AdoptionLikelihood', 'PetID'])  # X data
+y = Pet_data['AdoptionLikelihood']  # y data
 
-print(X)
+save_model()  # Saving the model
+
     
 
     
